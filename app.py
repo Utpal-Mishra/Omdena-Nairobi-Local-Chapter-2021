@@ -6,6 +6,7 @@ import four
 import five
 import eight
 import seven
+import status
 
 import streamlit as st
 
@@ -19,7 +20,8 @@ PAGES = {
     "2nd Lockdown Phase": four,
     "3rd Lockdown Phase": five,
     "Compare Lockdown Phases": eight,
-    "Region-Wise Analysis": seven
+    "Region-Wise Analysis": seven,
+    "Find Weather Status": status
 }
 
 st.sidebar.title('Navigation Bar')
