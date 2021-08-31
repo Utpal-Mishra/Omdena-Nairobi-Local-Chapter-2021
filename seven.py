@@ -46,7 +46,7 @@ def app():
         bar.progress(i+1)
         time.sleep(0.01)
     
-    path = 'new_master_data.csv'
+    path = file #'new_master_data.csv'
     data = pd.read_csv(path)
     #print("Data Shape: ", data.shape)
     data.head()
@@ -56,8 +56,8 @@ def app():
     ".... and now we're done!!!"
     
     ###########################################################################
-
-
+    
+    
     def plot(city):
       fig = go.Figure()
       fig.add_trace(go.Scatter(x = max[max.City == city].date, y = max[max.City == city].Concentration, name = "max conc.", mode = "lines", line=dict(color='blue')))

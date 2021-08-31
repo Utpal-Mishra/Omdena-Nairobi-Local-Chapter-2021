@@ -1,6 +1,4 @@
 import streamlit as st
-import requests
-import json
 
 def app():
     st.write("")
@@ -26,7 +24,7 @@ def app():
     
     st.write("")
     
-    st.write("Page 2: N0 Lockdown Phase")
+    st.write("Page 2: No Lockdown Phase")
     
     st.write("")
     

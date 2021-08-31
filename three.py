@@ -46,7 +46,7 @@ def app():
         bar.progress(i+1)
         time.sleep(0.01)
     
-    path = 'new_master_data.csv'
+    path = file #'new_master_data.csv'
     data = pd.read_csv(path)
     #print("Data Shape: ", data.shape)
     data.head()
@@ -90,6 +90,16 @@ def app():
     
     st.subheader("Visualization Part 3: 1st Lockdown Phase")
     
+    
+    # Plot Function
+    def barplot(data, x, y, frame, color, ylabel, title):
+      fig = px.bar(pollutants, x=x, y=y, animation_frame = frame, color=color, barmode='group')
+      fig.update_xaxes(title_text = "France Cities", rangeslider_visible=True, showline=True, linewidth=2, linecolor='black', mirror=True)
+      fig.update_yaxes(title_text = ylabel, showline=True, linewidth=2, linecolor='black', mirror=True)
+      # fig.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)', marker_line_width=1.5, opacity=0.6)
+      fig.update_layout(height=700, width=1400, title_text=title) 
+      st.plotly_chart(fig)
+    
     ## 1st LOCKDOWN PHASE
     lockdown = data[data.lockdown == "lockdown_1"].reset_index().drop('index', axis = 1) 
     print("Data Shape: ", lockdown.shape)
@@ -116,14 +126,6 @@ def app():
     
     st.subheader("Visualization Part 2: 1st Lockdown Phase")
     
-    # Plot Function
-    def barplot(data, x, y, frame, color, ylabel, title):
-      fig = px.bar(pollutants, x=x, y=y, animation_frame = frame, color=color, barmode='group')
-      fig.update_xaxes(title_text = "France Cities", rangeslider_visible=True, showline=True, linewidth=2, linecolor='black', mirror=True)
-      fig.update_yaxes(title_text = ylabel, showline=True, linewidth=2, linecolor='black', mirror=True)
-      # fig.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)', marker_line_width=1.5, opacity=0.6)
-      fig.update_layout(height=700, width=1400, title_text=title) 
-      st.plotly_chart(fig)
     
     ## 1st LOCKDOWN PHASE
     

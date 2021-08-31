@@ -34,7 +34,7 @@ def app():
     file = st.file_uploader("Upload file")
     show_file = st.empty()
     
-    if not file:
+    if file is not None:
         show_file.info("Please upload a file of type: " + ", ".join([".csv", ".xls", ".xlsx"]))
         return
     
@@ -47,10 +47,10 @@ def app():
         bar.progress(i+1)
         time.sleep(0.01)
     
-    path = 'new_master_data.csv'
+    path = file #'new_master_data.csv'
     data = pd.read_csv(path)
     #print("Data Shape: ", data.shape)
-    data.head()
+    #data.head()
     
     ".... and now we're done again!!!"
     

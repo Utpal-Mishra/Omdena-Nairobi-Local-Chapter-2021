@@ -139,7 +139,6 @@ def app():
     import folium # plotting library
     from folium import plugins
     from streamlit_folium import folium_static
-    import leafmap
     #from streamlit_folium import folium_static
     
     City = []
@@ -173,6 +172,7 @@ def app():
     newdata = pd.merge(data, Coordinates, on='City', how='outer')
     # print("Dimensions of New Data: ", newdata.shape)
     
+    @st.cache
     def map(data):
       fig = px.scatter_geo(data, 
                          lat='Latitude', 

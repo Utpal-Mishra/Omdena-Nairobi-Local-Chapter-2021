@@ -22,7 +22,6 @@ from streamlit_metrics import metric, metric_row
 sys.setrecursionlimit(100000)
 #print("Installed Dependencies")
 
-
 def app():
     st.title("COVID-19 BEFORE-DURING ANALYSIS IN FRANCE")
     
@@ -46,7 +45,7 @@ def app():
         bar.progress(i+1)
         time.sleep(0.01)
     
-    path = 'new_master_data.csv'
+    path = file #'new_master_data.csv'
     data = pd.read_csv(path)
     #print("Data Shape: ", data.shape)
     data.head()
@@ -106,28 +105,7 @@ def app():
     
     pollutants = pollutants.melt(id_vars=["date", "City"], var_name = "Pollutants", value_name = "Concentration")
     pollutants.sort_values(["date", "Pollutants"], inplace = True)
-    
-    
-    def barplot(data, x, y, frame, color, ylabel, title):
-      fig = px.bar(pollutants, x=x, y=y, animation_frame = frame, color=color)
-      fig.update_xaxes(title_text = "France Cities", rangeslider_visible=False, showline=True, linewidth=2, linecolor='black', mirror=True)
-      fig.update_yaxes(title_text = ylabel, showline=True, linewidth=2, linecolor='black', mirror=True)
-    
-      fig.add_trace(go.Scatter(x = ['2020-03-01', '2020-04-15', '2020-07-20', '2020-11-15', '2021-01-20', '2021-03-27', '2021-06-15'], y = [650, 650, 650, 650, 650, 650, 650], 
-                               mode="text", name="Labels", text=["No Lockdown", "1st Lockdown", "No Lockdown", "2nd Lockdown", "No Lockdown", "3rd Lockdown", "No Lockdown"], textposition="top center"))
-      fig.update_xaxes(title_text = "Date", rangeslider_visible=True, showline=True, linewidth=2, linecolor='black', mirror=True)
-      fig.update_yaxes(title_text = "Average Concentration", showline=True, linewidth=2, linecolor='black', mirror=True)
-      fig.update_layout(height=700, width=1500, title_text="Average Concentration (Unit - µg/m³) of Air Pollutants in France from 2020-21 ",
-                          shapes = [dict(type = "rect", y0 = -50, y1 = 700, x0="2020-02-05", x1="2020-03-17", name = "No Lockdown", fillcolor = "green", opacity = 0.5),
-                                    dict(type = "rect", y0 = -50, y1 = 700, x0="2020-03-17", x1="2020-05-10", name = "1st Lockdown", fillcolor = "red", opacity = 0.5),
-                                    dict(type = "rect", y0 = -50, y1 = 700, x0="2020-05-10", x1="2020-10-17", name = "No Lockdown", fillcolor = "green", opacity = 0.5), 
-                                    dict(type = "rect", y0 = -50, y1 = 700, x0="2020-10-17", x1="2020-12-14", name = "2nd Lockdown", fillcolor = "red", opacity = 0.5),
-                                    dict(type = "rect", y0 = -50, y1 = 700, x0="2020-12-14", x1="2021-02-26", name = "No Lockdown", fillcolor = "green", opacity = 0.5),
-                                    dict(type = "rect", y0 = -50, y1 = 700, x0="2021-02-26", x1="2021-05-02", name = "3rd Lockdown", fillcolor = "red", opacity = 0.5),
-                                    dict(type = "rect", y0 = -50, y1 = 700, x0="2021-05-02", x1="2021-07-27", name = "No Lockdown", fillcolor = "green", opacity = 0.5)]) 
-      #fig.show()
-      st.plotly_chart(fig)
-      
+     
       
     if st.checkbox("Compare and Analyse Pollutants through the Lockdown Phases"):
         barplot(pollutants, 
@@ -149,25 +127,6 @@ def app():
     
     pollutants = pollutants.melt(id_vars=["date", "City"], var_name = "Pollutants", value_name = "Concentration")
     pollutants.sort_values(["date", "Pollutants"], inplace = True)
-    
-    def barplot(data, x, y, frame, color, ylabel, title):
-      fig = px.bar(pollutants, x=x, y=y, animation_frame = frame, color=color)
-      fig.update_xaxes(title_text = "France Cities", rangeslider_visible=False, showline=True, linewidth=2, linecolor='black', mirror=True)
-      fig.update_yaxes(title_text = ylabel, showline=True, linewidth=2, linecolor='black', mirror=True)
-    
-      fig.add_trace(go.Scatter(x = ['2020-03-01', '2020-04-15', '2020-07-20', '2020-11-15', '2021-01-20', '2021-03-27', '2021-06-15'], y = [800, 800, 800, 800, 800, 800, 800], 
-                               mode="text", name="Labels", text=["No Lockdown", "1st Lockdown", "No Lockdown", "2nd Lockdown", "No Lockdown", "3rd Lockdown", "No Lockdown"], textposition="top center"))
-      fig.update_xaxes(title_text = "Date", rangeslider_visible=True, showline=True, linewidth=2, linecolor='black', mirror=True)
-      fig.update_yaxes(title_text = "Average Concentration", showline=True, linewidth=2, linecolor='black', mirror=True)
-      fig.update_layout(height=700, width=1500, title_text="Average Concentration (Unit - µg/m³) of Air Pollutants in France from 2020-21 ",
-                          shapes = [dict(type = "rect", y0 = -50, y1 = 1200, x0="2020-02-05", x1="2020-03-17", name = "No Lockdown", fillcolor = "green", opacity = 0.5),
-                                    dict(type = "rect", y0 = -50, y1 = 1200, x0="2020-03-17", x1="2020-05-10", name = "1st Lockdown", fillcolor = "red", opacity = 0.5),
-                                    dict(type = "rect", y0 = -50, y1 = 1200, x0="2020-05-10", x1="2020-10-17", name = "No Lockdown", fillcolor = "green", opacity = 0.5), 
-                                    dict(type = "rect", y0 = -50, y1 = 1200, x0="2020-10-17", x1="2020-12-14", name = "2nd Lockdown", fillcolor = "red", opacity = 0.5),
-                                    dict(type = "rect", y0 = -50, y1 = 1200, x0="2020-12-14", x1="2021-02-26", name = "No Lockdown", fillcolor = "green", opacity = 0.5),
-                                    dict(type = "rect", y0 = -50, y1 = 1200, x0="2021-02-26", x1="2021-05-02", name = "3rd Lockdown", fillcolor = "red", opacity = 0.5),
-                                    dict(type = "rect", y0 = -50, y1 = 1200, x0="2021-05-02", x1="2021-07-27", name = "No Lockdown", fillcolor = "green", opacity = 0.5)]) 
-      fig.show()
       
       
     if st.checkbox("Compare and Analyse Pollutants with CO2 Sources through the Lockdown Phases"):

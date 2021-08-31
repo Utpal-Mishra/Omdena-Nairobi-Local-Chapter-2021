@@ -46,7 +46,7 @@ def app():
         bar.progress(i+1)
         time.sleep(0.01)
     
-    path = 'new_master_data.csv'
+    path = file #'new_master_data.csv'
     data = pd.read_csv(path)
     #print("Data Shape: ", data.shape)
     data.head()
