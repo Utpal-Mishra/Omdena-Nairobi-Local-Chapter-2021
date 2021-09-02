@@ -63,7 +63,7 @@ def app():
     pollutants = pollutants.melt(id_vars=["date", "City"], var_name = "CO2 Sources", value_name = "Concentration")
     pollutants.sort_values(["date", "CO2 Sources"], inplace = True)
     
-    @st.cache(suppress_st_warning=True)
+    
     def barplot(data, x, y, frame, color, ylabel, title):
       fig = px.bar(pollutants, x=x, y=y, animation_frame = frame, color=color)
       fig.update_xaxes(title_text = "France Cities", rangeslider_visible=False, showline=True, linewidth=2, linecolor='black', mirror=True)
