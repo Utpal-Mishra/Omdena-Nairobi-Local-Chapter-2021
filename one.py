@@ -172,7 +172,7 @@ def app():
     newdata = pd.merge(data, Coordinates, on='City', how='outer')
     # print("Dimensions of New Data: ", newdata.shape)
     
-    @st.cache
+    @st.cache(suppress_st_warning=True)
     def map(data):
       fig = px.scatter_geo(data, 
                          lat='Latitude', 

@@ -92,6 +92,7 @@ def app():
     
     
     # Plot Function
+    @st.cache(suppress_st_warning=True)
     def barplot(data, x, y, frame, color, ylabel, title):
       fig = px.bar(pollutants, x=x, y=y, animation_frame = frame, color=color, barmode='group')
       fig.update_xaxes(title_text = "France Cities", rangeslider_visible=True, showline=True, linewidth=2, linecolor='black', mirror=True)
