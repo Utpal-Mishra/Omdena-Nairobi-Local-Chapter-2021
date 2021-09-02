@@ -19,6 +19,31 @@ from datetime import datetime as dt
 sys.setrecursionlimit(100000)
 #print("Installed Dependencies")
 
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
+    
+import random # library for random number generation
+import matplotlib.cm as cm
+import matplotlib.colors as colors
+#%matplotlib inline 
+    
+#!conda install -c conda-forge geopy --yes 
+from geopy.geocoders import Nominatim # module to convert an address into latitude and longitude values
+    
+# libraries for displaying images
+from IPython.display import Image 
+from IPython.core.display import HTML 
+        
+import requests # library to handle requests
+import json # library to handle JSON files
+from pandas import json_normalize # tranform JSON file into a pandas dataframe
+    
+#!conda install -c conda-forge folium=0.5.0 --yes
+import folium # plotting library
+from folium import plugins
+from streamlit_folium import folium_static
+#from streamlit_folium import folium_static
+
 
 def app():
     st.title("COVID-19 BEFORE-DURING ANALYSIS IN FRANCE")
@@ -114,32 +139,6 @@ def app():
         #fig.show()
         st.plotly_chart(fig) 
     
-    
-    # MAP
-    pd.set_option('display.max_columns', None)
-    pd.set_option('display.max_rows', None)
-    
-    import random # library for random number generation
-    import matplotlib.cm as cm
-    import matplotlib.colors as colors
-    #%matplotlib inline 
-    
-    #!conda install -c conda-forge geopy --yes 
-    from geopy.geocoders import Nominatim # module to convert an address into latitude and longitude values
-    
-    # libraries for displaying images
-    from IPython.display import Image 
-    from IPython.core.display import HTML 
-        
-    import requests # library to handle requests
-    import json # library to handle JSON files
-    from pandas import json_normalize # tranform JSON file into a pandas dataframe
-    
-    #!conda install -c conda-forge folium=0.5.0 --yes
-    import folium # plotting library
-    from folium import plugins
-    from streamlit_folium import folium_static
-    #from streamlit_folium import folium_static
     
     City = []
     Longitude = []
