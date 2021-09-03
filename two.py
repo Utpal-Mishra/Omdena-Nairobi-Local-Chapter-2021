@@ -1,4 +1,3 @@
-
 import streamlit as st
 import time
 
@@ -29,12 +28,12 @@ def app():
     
     st.header("NO LOCKDOWN PHASE")
     
-    st.subheader("Loading the Master Data....")
+    st.subheader("Loading the COVID-19 Data....")
     
     file = st.file_uploader("Upload file")
     show_file = st.empty()
     
-    if file is not None:
+    if not file:
         show_file.info("Please upload a file of type: " + ", ".join([".csv", ".xls", ".xlsx"]))
         return
     
@@ -45,14 +44,19 @@ def app():
         # Update progress bar with iterations
         label.text(f'Loaded {i+1} %')
         bar.progress(i+1)
-        time.sleep(0.01)
+        time.sleep(0.05)
     
-    path = file #'new_master_data.csv'
+    path = 'new_master_data.csv'
     data = pd.read_csv(path)
+    #print("Data Shape: ", data.shape)
+    data.head()
     #print("Data Shape: ", data.shape)
     #data.head()
     
-    ".... and now we're done again!!!"
+    ".... and now we're done!!!"
+    
+    
+    ###########################################################################
     
     if st.checkbox("Show Master DataFrame"):    
         # data
@@ -93,7 +97,6 @@ def app():
     
     ###########################################################################
     
-
 
         
     if st.checkbox("What is the highest concentration of pollutants"): 

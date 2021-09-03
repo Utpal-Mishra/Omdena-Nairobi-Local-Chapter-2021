@@ -67,7 +67,7 @@ def app():
         # Update progress bar with iterations
         label.text(f'Loaded {i+1} %')
         bar.progress(i+1)
-        time.sleep(0.1)
+        time.sleep(0.01)
     
     path = file
     data = pd.read_csv(path)

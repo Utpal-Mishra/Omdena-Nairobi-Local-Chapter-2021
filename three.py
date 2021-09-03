@@ -26,7 +26,7 @@ sys.setrecursionlimit(100000)
 def app():
     st.title("COVID-19 BEFORE-DURING ANALYSIS IN FRANCE")
     
-    st.title("1st LOCKDOWN PHASE")
+    st.header("1st LOCKDOWN PHASE")
     
     st.subheader("Loading the COVID-19 Data....")
     
