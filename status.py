@@ -5,11 +5,11 @@ def app():
     st.write("")
     st.write("")
     st.write("")
-    st.title("OMDENA FRANCE LOCAL CHAPTER 2021")
+    st.title("OMDENA NAIROBI LOCAL CHAPTER 2021")
     st.write("")
     st.write("")
     st.write("")
-    st.header("COVID-19 BEFORE-DURING ANALYSIS IN FRANCE")
+    st.header("COVID-19 BEFORE-DURING ANALYSIS IN NAIROBI")
     st.write("")
     st.write("")
     
@@ -19,9 +19,9 @@ def app():
     st.write("")
     
     BASEURL = "http://api.weatherapi.com/v1"
-    st.write("BASE URL: 'http://api.weatherapi.com/v1")
+    #st.write("BASE URL: 'http://api.weatherapi.com/v1' ")
     APIKEY = "316171a92c5d458c85735242213008"
-    st.write("API KEY: ------------------------------")
+    #st.write("API KEY: ------------------------------")
     st.write("ENTER PLACE: ")
     Place = st.text_input("")
     

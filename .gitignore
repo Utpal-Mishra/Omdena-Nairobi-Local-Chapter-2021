@@ -1,4 +1,6 @@
 audio/*
+cases_by_age.csv
+Cases_Per_County.csv
 COVID_2020.csv
-master_data.csv
-new_master_data.csv
+fatalities.csv
+WHO-COVID-19-global-data.csv

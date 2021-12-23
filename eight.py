@@ -23,7 +23,7 @@ sys.setrecursionlimit(100000)
 #print("Installed Dependencies")
 
 def app():
-    st.title("COVID-19 BEFORE-DURING ANALYSIS IN FRANCE")
+    st.title("COVID-19 BEFORE-DURING ANALYSIS IN NAIROBI")
     
     st.header("LOCKDOWN PHASES")
     

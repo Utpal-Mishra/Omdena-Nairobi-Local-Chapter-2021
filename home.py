@@ -5,13 +5,13 @@ def app():
     st.write("")
     st.write("")
     
-    st.title("OMDENA FRANCE LOCAL CHAPTER 2021")
+    st.title("OMDENA NAIROBI LOCAL CHAPTER 2021")
     
     st.write("")
     st.write("")
     st.write("")
     
-    st.header("COVID-19 BEFORE-DURING ANALYSIS IN FRANCE")
+    st.header("COVID-19 BEFORE-DURING ANALYSIS IN NAIROBI")
     
     st.write("")
     st.write("")
@@ -24,26 +24,10 @@ def app():
     
     st.write("")
     
-    st.write("Page 2: No Lockdown Phase")
+    st.write("Page 2: Compare Lockdown Phases")
     
     st.write("")
     
-    st.write("Page 3: First Lockdown Phase")
-    
-    st.write("")
-    
-    st.write("Page 4: Second Lockdown Phase")
-    
-    st.write("")
-    
-    st.write("Page 5: Third Lockdown Phase")
-    
-    st.write("")
-    
-    st.write("Page 6: Compare Lockdown Phases")
-    
-    st.write("")
-    
-    st.write("Page 7: Region-Wise Analysis")
+    st.write("Page 3: Region-Wise Analysis")
     
     

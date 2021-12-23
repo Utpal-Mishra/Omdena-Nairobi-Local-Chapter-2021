@@ -46,7 +46,7 @@ from streamlit_folium import folium_static
 
 
 def app():
-    st.title("COVID-19 BEFORE-DURING ANALYSIS IN FRANCE")
+    st.title("COVID-19 BEFORE-DURING ANALYSIS IN NAIROBI")
     
     st.header("PART 1")
     
@@ -100,8 +100,8 @@ def app():
         # data
         st.dataframe(data)
     
-    data = data[data.Country == "FR"]
-    print("France Data Dimensions: ", data.shape)
+    data = data[data.Country == "ZA"]
+    print("Africa Data Dimensions: ", data.shape)
     #st.text("France Data Dimensions: ", data.shape)
     
     st.header("Data Visualization")
@@ -113,7 +113,7 @@ def app():
         fig = px.scatter(data, x="count", y="median", animation_frame="Date", animation_group="Specie", size=data["count"], color="Specie", hover_name="Specie", facet_col="Specie")
         fig.update_xaxes(title_text = "count", rangeslider_visible=False, showline=True, linewidth=2, linecolor='black', mirror=True)
         fig.update_yaxes(title_text = "Average Concentration", showline=True, linewidth=2, linecolor='black', mirror=True)
-        fig.update_layout(height=450, width=1200, title_text="Average Concentration (Unit - µg/m³) of Air Pollutants in France from 2019-20") 
+        fig.update_layout(height=450, width=1200, title_text="Average Concentration (Unit - µg/m³) of Air Pollutants in Africa from 2019-20") 
         #fig.show()
         st.plotly_chart(fig)    
     
@@ -122,7 +122,7 @@ def app():
         fig = px.scatter(data, x="Specie", y="median", animation_frame="Date", size=data["count"], color="City", hover_name="Specie", facet_col="Specie")
         fig.update_xaxes(title_text = "Specie", rangeslider_visible=False, showline=True, linewidth=2, linecolor='black', mirror=True)
         fig.update_yaxes(title_text = "Average Concentration", showline=True, linewidth=2, linecolor='black', mirror=True)
-        fig.update_layout(height=450, width=1200, title_text="Average Concentration (Unit - µg/m³) of Air Pollutants in France from 2019-20") 
+        fig.update_layout(height=450, width=1200, title_text="Average Concentration (Unit - µg/m³) of Air Pollutants in Africa from 2019-20") 
         #fig.show()
         st.plotly_chart(fig)  
     
@@ -130,12 +130,12 @@ def app():
     st.subheader("Bar Plot")
     
     # Bar Plot
-    if st.checkbox("Average Concentration of Species in Cities of France"):   
+    if st.checkbox("Average Concentration of Species in Cities of Africa"):   
         fig = px.bar(data, x="City", y="median", animation_frame = "Date", color='Specie', barmode='group')
         fig.update_xaxes(title_text = "France Cities", rangeslider_visible=False, showline=True, linewidth=2, linecolor='black', mirror=True)
         fig.update_yaxes(title_text = "Average Concentration of Pollutants (Unit - µg/m³)", showline=True, linewidth=2, linecolor='black', mirror=True)
         # fig.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)', marker_line_width=1.5, opacity=0.6)
-        fig.update_layout(height=600, width=1400, title_text="Air Pollutants in France from 2019-20") 
+        fig.update_layout(height=600, width=1400, title_text="Air Pollutants in Africa from 2019-20") 
         #fig.show()
         st.plotly_chart(fig) 
     
@@ -145,15 +145,19 @@ def app():
     Latitude = []
     
     for i in data.City.unique():
-      geolocator = Nominatim(user_agent="four_square")
-      location = geolocator.geocode(i+", France")
-      latitude = location.latitude
-      longitude = location.longitude
-      City.append(i)
-      Longitude.append(longitude)
-      Latitude.append(latitude)
-      # print(i, longitude, latitude)
-    
+      try:  
+          geolocator = Nominatim(user_agent="four_square")
+          location = geolocator.geocode(i+", Africa")
+          latitude = location.latitude
+          longitude = location.longitude
+          City.append(i)
+          Longitude.append(longitude)
+          Latitude.append(latitude)
+          # print(i, longitude, latitude)
+      except:
+          pass
+        
+    data = data.dropna()
     # data["Longitude"] = Longitude
     # data["Latitude"] = Latitude
     
@@ -171,6 +175,7 @@ def app():
     newdata = pd.merge(data, Coordinates, on='City', how='outer')
     # print("Dimensions of New Data: ", newdata.shape)
     
+    newdata = newdata.dropna()
     
     def map(data):
       fig = px.scatter_geo(data, 
@@ -179,7 +184,7 @@ def app():
                          size='median', 
                          animation_frame="Date", 
                          animation_group = "Specie",
-                         title='Air Pollutants Concentration (Unit - µg/m³) throughout Cities in France', 
+                         title='Air Pollutants Concentration (Unit - µg/m³) throughout Cities in Africa', 
                          hover_name="City",
                          projection = "orthographic", 
                          width = 1400,
@@ -193,35 +198,35 @@ def app():
     if st.checkbox("Orthographic Plot representing Concentration of Air Pollutants"): 
         map(newdata)
     
-    address = 'France'
+    address = 'Africa'
     
     geolocator = Nominatim(user_agent="four_square")
     location = geolocator.geocode(address)
     latitude = location.latitude
     longitude = location.longitude
-    print('The geograpical coordinate of France are {}, {}.'.format(latitude, longitude))
+    print('The geograpical coordinate of Africa are {}, {}.'.format(latitude, longitude))
     
     
     # midpoint = (np.average(newdata['Latitude']), np.average(newdata['Longitude']))
-    if st.checkbox("Locate France"):
-        Map = folium.Map(location = [latitude, longitude], zoom_start = 12, tiles = 'Stamen Terrain') #Mapbox Bright #Stamen Toner
+    if st.checkbox("Locate Africa"):
+        Map = folium.Map(location = [latitude, longitude], zoom_start = 6   , tiles = 'Stamen Terrain') #Mapbox Bright #Stamen Toner
         Marker = folium.map.FeatureGroup()
         Marker.add_child(folium.CircleMarker([latitude, longitude], 
                                                      radius = 5, 
                                                      color = 'red', 
                                                      fill_color = 'Red'))
         Map.add_child(Marker)
-        folium.Marker([latitude, longitude], popup = 'France').add_to(Map)
+        folium.Marker([latitude, longitude], popup = 'Africa').add_to(Map)
         folium_static(Map)
     
     
-    if st.checkbox("Identify Cities in France"):
+    if st.checkbox("Identify Cities in Africa"):
         # create map of france using latitude and longitude values
         Map = folium.Map(location=[latitude, longitude], zoom_start=6)
         
         # add markers to map
         for lat, lng, reg in zip(newdata.Latitude, newdata.Longitude, newdata.City):
-            label = '{}, France'.format(reg)
+            label = '{}, Africa'.format(reg)
             label = folium.Popup(label, parse_html=True)
             folium.CircleMarker(
                 [lat, lng],
@@ -235,7 +240,7 @@ def app():
         
         folium_static(Map)
     
-    if st.checkbox("Locate Cities in France"):
+    if st.checkbox("Locate Cities in Africa"):
         Map = folium.Map(location = [latitude, longitude], zoom_start = 6)
         
         # instantiate a mark cluster object for the incidents in the dataframe
@@ -253,7 +258,7 @@ def app():
         folium_static(Map)
         
     
-    if st.checkbox("Total Proportions of Pollutants in Cities of France"):
+    if st.checkbox("Total Proportions of Pollutants in Cities of Africa"):
         Map = folium.Map(location=[latitude, longitude], zoom_start=6)
         
         # instantiate a feature group in the dataframe
