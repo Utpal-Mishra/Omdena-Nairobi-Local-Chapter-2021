@@ -18,15 +18,14 @@ from datetime import datetime as dt
 
 from streamlit_metrics import metric, metric_row
 
-
 sys.setrecursionlimit(100000)
 #print("Installed Dependencies")
 
-def app():
 
+def app():
     st.title("COVID-19 BEFORE-DURING ANALYSIS IN NAIROBI")
     
-    st.header("NO LOCKDOWN PHASE")
+    st.header("LOCKDOWN PHASES")
     
     st.subheader("Loading the COVID-19 Data....")
     
@@ -44,7 +43,7 @@ def app():
         # Update progress bar with iterations
         label.text(f'Loaded {i+1} %')
         bar.progress(i+1)
-        time.sleep(0.05)
+        time.sleep(0.01)
     
     path = file #'new_master_data.csv'
     data = pd.read_csv(path)
@@ -55,277 +54,178 @@ def app():
     
     ".... and now we're done!!!"
     
-    
     ###########################################################################
     
-    if st.checkbox("Show Master DataFrame"):    
-        # data
-        st.dataframe(data)
+    data = data.melt(id_vars=["Date"], var_name = "City", value_name = "Cases")
+    data['Date'] = pd.to_datetime(data['Date'])
+    data.sort_values(["Date", "City"], inplace = True)
+    data = data[['City', 'Date', 'Cases']]
     
-    
-    st.header("Exploratory Data Analysis")
-    
-    ###########################################################################
-    
-    
-    st.markdown("### Key Metrics")
-
-    
-    P1, P2, P3, P4, P5, P6, P7 = st.columns(7)
-    P1.metric(label = "CO",    
-              value = round(data[data.lockdown == "No lockdown"]["('median', 'co')"].mean(), 2), 
-              delta = round(data[data.lockdown == "No lockdown"]["('median', 'co')"].mean() - data["('median', 'co')"].mean(), 4))
-    P2.metric(label = "Dew",   
-              value = round(data[data.lockdown == "No lockdown"]["('median', 'dew')"].mean(), 2), 
-              delta = round(data[data.lockdown == "No lockdown"]["('median', 'co')"].mean() - data["('median', 'dew')"].mean(), 4))
-    P3.metric(label = "NO2",   
-              value = round(data[data.lockdown == "No lockdown"]["('median', 'no2')"].mean(), 2), 
-              delta = round(data[data.lockdown == "No lockdown"]["('median', 'no2')"].mean() - data["('median', 'no2')"].mean(), 4))
-    P4.metric(label = "O3",    
-              value = round(data[data.lockdown == "No lockdown"]["('median', 'o3')"].mean(), 2), 
-              delta = round(data[data.lockdown == "No lockdown"]["('median', 'o3')"].mean() - data["('median', 'o3')"].mean(), 4))
-    P5.metric(label = "PM10",  
-              value = round(data[data.lockdown == "No lockdown"]["('median', 'pm10')"].mean(), 2), 
-              delta = round(data[data.lockdown == "No lockdown"]["('median', 'pm10')"].mean() - data["('median', 'pm10')"].mean(), 4))
-    P6.metric(label = "PM2.5", 
-              value = round(data[data.lockdown == "No lockdown"]["('median', 'pm25')"].mean(), 2), 
-              delta = round(data[data.lockdown == "No lockdown"]["('median', 'pm25')"].mean() - data["('median', 'pm25')"].mean(), 4))
-    P7.metric(label = "SO2 ",  
-              value = round(data[data.lockdown == "No lockdown"]["('median', 'so2')"].mean(), 2), 
-              delta = round(data[data.lockdown == "No lockdown"]["('median', 'so2')"].mean() - data["('median', 'so2')"].mean(), 4))
-    
-    
-    ###########################################################################
-    
-
-        
-    if st.checkbox("What is the highest concentration of pollutants"): 
-        df = pd.DataFrame(data[["('max', 'co')", "('max', 'dew')", "('max', 'no2')", "('max', 'o3')", "('max', 'pm10')", "('max', 'pm25')", "('max', 'so2')"]])
-        st.dataframe(df.style.highlight_max(axis=0))
-    
-    if st.checkbox("What is the minimum concentration of pollutants"):
-        df = pd.DataFrame(data[["('min', 'co')", "('min', 'dew')", "('min', 'no2')", "('min', 'o3')", "('min', 'pm10')", "('min', 'pm25')", "('min', 'so2')"]])
-        st.dataframe(df.style.highlight_min(axis=0))
-    
-    if st.checkbox("What is the source causes major emission of CO2"): 
-        df = pd.DataFrame(data[["driving", "transit", "walking"]])
-        st.dataframe(df.style.highlight_max(axis=0))
-    
-    
-    st.header("Visual Interpreatations")
-    
-    
-    # Plot Function
-    def barplot(data, x, y, frame, color, ylabel, title):
-      fig = px.bar(pollutants, x=x, y=y, animation_frame = frame, color=color, barmode='group')
-      fig.update_xaxes(title_text = "France Cities", rangeslider_visible=True, showline=True, linewidth=2, linecolor='black', mirror=True)
-      fig.update_yaxes(title_text = ylabel, showline=True, linewidth=2, linecolor='black', mirror=True)
-      # fig.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)', marker_line_width=1.5, opacity=0.6)
-      fig.update_layout(height=700, width=1400, title_text=title) 
+    def plot(city, y):
+      fig = go.Figure()
+      fig.add_trace(go.Scatter(x = data[data.City == city].Date, y = data[data.City == city].Cases, name = "Cases", mode = "lines", line=dict(color='blue')))
+      fig.add_trace(go.Scatter(x = ['2020-02-10', '2020-07-15', '2020-11-20', '2021-02-01', '2021-04-15', '2021-07-27', '2021-11-01', '2022-01-5'], 
+                               y = [int(y/2), int(y/2), int(y/2), int(y/2), int(y/2), int(y/2), int(y/2), int(y/2)], 
+                               mode="text", name="Labels", 
+                               text=["No Lockdown", "1st Lockdown", "No Lockdown", "2nd Lockdown", "No Lockdown", "3rd Lockdown", "No Lockdown", "4th Lockdown"], 
+                               textposition="top center"))
+      fig.update_xaxes(title_text = "Date", rangeslider_visible=True, showline=True, linewidth=2, linecolor='black', mirror=True)
+      fig.update_yaxes(title_text = "Cases", showline=True, linewidth=2, linecolor='black', mirror=True)
+      #fig.add_hline(y=max(data[data.City == city].Cases))
+      fig.update_layout(height=700, width=1400, title_text="Cases in Africa from 2020-21 :: " + city,
+                          shapes = [dict(type = "rect", y0 = -3, y1 = y+10, x0="2020-01-03", x1="2020-03-23", name = "No Lockdown", fillcolor = "green", opacity = 0.5),
+                                    dict(type = "rect", y0 = -3, y1 = y+10, x0="2020-03-23", x1="2020-11-11", name = "1st Lockdown", fillcolor = "red", opacity = 0.5),
+                                    dict(type = "rect", y0 = -3, y1 = y+10, x0="2020-11-11", x1="2020-12-01", name = "No Lockdown", fillcolor = "green", opacity = 0.5), 
+                                    dict(type = "rect", y0 = -3, y1 = y+10, x0="2020-12-01", x1="2021-04-01", name = "2nd Lockdown", fillcolor = "red", opacity = 0.5),
+                                    dict(type = "rect", y0 = -3, y1 = y+10, x0="2021-04-01", x1="2021-05-01", name = "No Lockdown", fillcolor = "green", opacity = 0.5),
+                                    dict(type = "rect", y0 = -3, y1 = y+10, x0="2021-05-01", x1="2021-10-01", name = "3rd Lockdown", fillcolor = "red", opacity = 0.5),
+                                    dict(type = "rect", y0 = -3, y1 = y+10, x0="2021-10-01", x1="2021-12-01", name = "No Lockdown", fillcolor = "green", opacity = 0.5),
+                                    dict(type = "rect", y0 = -3, y1 = y+10, x0="2021-12-01", x1="2022-02-21", name = "4rd Lockdown", fillcolor = "red", opacity = 0.5)]) 
       st.plotly_chart(fig)
       
-      
-    """st.subheader("Visualization Part 1")
-      
-    ### MEDIAN
-    median = data[["date", "City", "('median', 'co')", "('median', 'dew')", "('median', 'humidity')",
-           "('median', 'no2')", "('median', 'o3')", "('median', 'pm10')",
-           "('median', 'pm25')", "('median', 'pressure')", "('median', 'so2')",
-           "('median', 'temperature')", "('median', 'wind gust')",
-           "('median', 'wind speed')"]]
     
-    # print("Data Shape: ", median.shape)
-    
-    pollutants = median[["date", "City", "('median', 'co')", "('median', 'dew')", "('median', 'no2')", "('median', 'o3')", "('median', 'pm10')", "('median', 'pm25')", "('median', 'so2')"]]
-    
-    pollutants = pollutants.melt(id_vars=["date", "City"], var_name = "Pollutants", value_name = "Concentration")
-    pollutants.sort_values(["date", "Pollutants"], inplace = True)
-    pollutants.head()
-    
-    if st.checkbox("1.1. Show Plot with Average Concentration of Pollutants"):    
-        # data
-        st.write(barplot(pollutants, 
-            "City", 
-            "Concentration", 
-            "date", 
-            "Pollutants", 
-            "Average Concentration of Pollutants (Unit - µg/m³)", 
-            "Air Pollutants in France from 2019-20"))
-    
-    ### MAX
-    max = data[["date", "City", "('max', 'co')", "('max', 'dew')", "('max', 'humidity')",
-           "('max', 'no2')", "('max', 'o3')", "('max', 'pm10')",
-           "('max', 'pm25')", "('max', 'pressure')", "('max', 'so2')",
-           "('max', 'temperature')", "('max', 'wind gust')",
-           "('max', 'wind speed')"]]
-    
-    #print("Data Shape: ", max.shape)
-    
-    pollutants = max[["date", "City", "('max', 'co')", "('max', 'dew')", "('max', 'no2')", "('max', 'o3')", "('max', 'pm10')", "('max', 'pm25')", "('max', 'so2')"]]
-    
-    pollutants = pollutants.melt(id_vars=["date", "City"], var_name = "Pollutants", value_name = "Concentration")
-    pollutants.sort_values(["date", "Pollutants"], inplace = True)
-    pollutants.head()
-    
-    if st.checkbox("1.2. Show Plot with Maximum Concentration of Pollutants"):    
-        # data
-        st.write(barplot(pollutants, 
-            "City", 
-            "Concentration", 
-            "date", 
-            "Pollutants", 
-            "Maximum Concentration of Pollutants (Unit - µg/m³)", 
-            "Air Pollutants in France from 2019-20"))
-    
-    ### MIN
-    min = data[["date", "City", "('min', 'co')", "('min', 'dew')", "('min', 'humidity')",
-           "('min', 'no2')", "('min', 'o3')", "('min', 'pm10')",
-           "('min', 'pm25')", "('min', 'pressure')", "('min', 'so2')",
-           "('min', 'temperature')", "('min', 'wind gust')",
-           "('min', 'wind speed')"]]
-    
-    #print("Data Shape: ", min.shape)
-    
-    pollutants = min[["date", "City", "('min', 'co')", "('min', 'dew')", "('min', 'no2')", "('min', 'o3')", "('min', 'pm10')", "('min', 'pm25')", "('min', 'so2')"]]
-    
-    pollutants = pollutants.melt(id_vars=["date", "City"], var_name = "Pollutants", value_name = "Concentration")
-    pollutants.sort_values(["date", "Pollutants"], inplace = True)
-    pollutants.head()
-    
-    if st.checkbox("1.3. Show Plot with Minimum Concentration of Pollutants"):    
-        # data
-        st.write(barplot(pollutants, 
-            "City", 
-            "Concentration", 
-            "date", 
-            "Pollutants", 
-            "Minimum Concentration of Pollutants (Unit - µg/m³)", 
-            "Air Pollutants in France from 2019-20"))"""
+       
+    st.subheader("Visualize All Lockdown Phases")
     
     
-    st.subheader("Visualization Part 2: No Lockdown Phase")
+    if st.checkbox('Plot Bomet') :
+    	plot('Bomet', max(data[data.City == 'Bomet'].Cases))
     
-    ## NO LOCKDOWN PHASE
+    if st.checkbox('Plot Bungoma') :
+    	plot('Bungoma', max(data[data.City == 'Bungoma'].Cases))
     
-    ### MEDIAN
-    median = data[["date", "City", "('median', 'co')", "('median', 'dew')", "('median', 'humidity')",
-           "('median', 'no2')", "('median', 'o3')", "('median', 'pm10')",
-           "('median', 'pm25')", "('median', 'pressure')", "('median', 'so2')",
-           "('median', 'temperature')", "('median', 'wind gust')",
-           "('median', 'wind speed')"]]
+    if st.checkbox('Plot Busia') :
+    	plot('Busia', max(data[data.City == 'Busia'].Cases))
     
-    # print("Data Shape: ", median.shape)
+    if st.checkbox('Plot Elgeyo Marakwet') :
+    	plot('Elgeyo Marakwet', max(data[data.City == 'Elgeyo Marakwet'].Cases))
     
-    pollutants = median[["date", "City", "('median', 'co')", "('median', 'dew')", "('median', 'no2')", "('median', 'o3')", "('median', 'pm10')", "('median', 'pm25')", "('median', 'so2')"]]
+    if st.checkbox('Plot Embu') :
+    	plot('Embu', max(data[data.City == 'Embu'].Cases))
     
-    pollutants = pollutants.melt(id_vars=["date", "City"], var_name = "Pollutants", value_name = "Concentration")
-    pollutants.sort_values(["date", "Pollutants"], inplace = True)
-    pollutants.head()
+    if st.checkbox('Plot Garissa') :
+    	plot('Garissa', max(data[data.City == 'Garissa'].Cases))
     
-    if st.checkbox("2.1.1. Show Plot with Average Concentration of Pollutants"):    
-        # data
-        st.write(barplot(pollutants, 
-            "City", 
-            "Concentration", 
-            "date", 
-            "Pollutants", 
-            "Average Concentration of Pollutants (Unit - µg/m³)", 
-            "Air Pollutants in France from 2020-21 during No Lockdown"))
+    if st.checkbox('Plot HomaBay') :
+    	plot('HomaBay', max(data[data.City == 'HomaBay'].Cases))
     
-    ### MAX
-    max = data[["date", "City", "('max', 'co')", "('max', 'dew')", "('max', 'humidity')",
-           "('max', 'no2')", "('max', 'o3')", "('max', 'pm10')",
-           "('max', 'pm25')", "('max', 'pressure')", "('max', 'so2')",
-           "('max', 'temperature')", "('max', 'wind gust')",
-           "('max', 'wind speed')"]]
+    if st.checkbox('Plot Isiolo') :
+    	plot('Isiolo', max(data[data.City == 'Isiolo'].Cases))
     
-    #print("Data Shape: ", max.shape)
+    if st.checkbox('Plot Kajiado') :
+    	plot('Kajiado', max(data[data.City == 'Kajiado'].Cases))
     
-    pollutants = max[["date", "City", "('max', 'co')", "('max', 'dew')", "('max', 'no2')", "('max', 'o3')", "('max', 'pm10')", "('max', 'pm25')", "('max', 'so2')"]]
+    if st.checkbox('Plot Kakamega') :
+    	plot('Kakamega', max(data[data.City == 'Kakamega'].Cases))
     
-    pollutants = pollutants.melt(id_vars=["date", "City"], var_name = "Pollutants", value_name = "Concentration")
-    pollutants.sort_values(["date", "Pollutants"], inplace = True)
-    pollutants.head()
+    if st.checkbox('Plot Kericho') :
+    	plot('Kericho', max(data[data.City == 'Kericho'].Cases))
     
-    if st.checkbox("2.1.2. Show Plot with Maximum Concentration of Pollutants"):    
-        # data
-        st.write(barplot(pollutants, 
-            "City", 
-            "Concentration", 
-            "date", 
-            "Pollutants", 
-            "Maximum Concentration of Pollutants (Unit - µg/m³)", 
-            "Air Pollutants in France in 2020-21 during No Lockdown"))
+    if st.checkbox('Plot Kiambu') :
+    	plot('Kiambu', max(data[data.City == 'Kiambu'].Cases))
     
-    ### MIN
-    min = data[["date", "City", "('min', 'co')", "('min', 'dew')", "('min', 'humidity')",
-           "('min', 'no2')", "('min', 'o3')", "('min', 'pm10')",
-           "('min', 'pm25')", "('min', 'pressure')", "('min', 'so2')",
-           "('min', 'temperature')", "('min', 'wind gust')",
-           "('min', 'wind speed')"]]
+    if st.checkbox('Plot Kilifi') :
+    	plot('Kilifi', max(data[data.City == 'Kilifi'].Cases))
     
-    #print("Data Shape: ", min.shape)
+    if st.checkbox('Plot Kirinyaga') :
+    	plot('Kirinyaga', max(data[data.City == 'Kirinyaga'].Cases))
     
-    pollutants = min[["date", "City", "('min', 'co')", "('min', 'dew')", "('min', 'no2')", "('min', 'o3')", "('min', 'pm10')", "('min', 'pm25')", "('min', 'so2')"]]
+    if st.checkbox('Plot Kisii') :
+    	plot('Kisii', max(data[data.City == 'Kisii'].Cases))
     
-    pollutants = pollutants.melt(id_vars=["date", "City"], var_name = "Pollutants", value_name = "Concentration")
-    pollutants.sort_values(["date", "Pollutants"], inplace = True)
-    pollutants.head()
+    if st.checkbox('Plot Kisumu') :
+    	plot('Kisumu', max(data[data.City == 'Kisumu'].Cases))
     
-    if st.checkbox("2.1.3. Show Plot with Minimum Concentration of Pollutants"):    
-        # data
-        st.write(barplot(pollutants, 
-            "City", 
-            "Concentration", 
-            "date", 
-            "Pollutants", 
-            "Minimum Concentration of Pollutants (Unit - µg/m³)", 
-            "Air Pollutants in France from 2020-21 during No Lockdown"))
+    if st.checkbox('Plot Kitui') :
+    	plot('Kitui', max(data[data.City == 'Kitui'].Cases))
     
+    if st.checkbox('Plot Kwale') :
+    	plot('Kwale', max(data[data.City == 'Kwale'].Cases))
     
-    ##########################################################################
+    if st.checkbox('Plot Laikipia') :
+    	plot('Laikipia', max(data[data.City == 'Laikipia'].Cases))
     
+    if st.checkbox('Plot Lamu') :
+    	plot('Lamu', max(data[data.City == 'Lamu'].Cases))
     
-    st.subheader("Visualization Part 3: No Lockdown Phase")
+    if st.checkbox('Plot Machakos') :
+    	plot('Machakos', max(data[data.City == 'Machakos'].Cases))
     
-    # CO2
+    if st.checkbox('Plot Makueni') :
+    	plot('Makueni', max(data[data.City == 'Makueni'].Cases))
     
-    ## NO LOCKDOWN PHASE
-    lockdown = data[data.lockdown == "No lockdown"].reset_index().drop('index', axis = 1)
-    print("Data Shape: ", lockdown.shape)
-    # From: 2020-02-15
-    # To  : 2020-03-17
+    if st.checkbox('Plot Mandera') :
+    	plot('Mandera', max(data[data.City == 'Mandera'].Cases))
     
-    # From: 2020-05-10
-    # To  : 2020-10-17
+    if st.checkbox('Plot Marsabit') :
+    	plot('Marsabit', max(data[data.City == 'Marsabit'].Cases))
     
-    # From: 2020-12-14
-    # To  : 2021-02-26
+    if st.checkbox('Plot Meru') :
+    	plot('Meru', max(data[data.City == 'Meru'].Cases))
     
-    # From: 2021-05-02
-    # To  : 2021-07-27
+    if st.checkbox('Plot Migori') :
+    	plot('Migori', max(data[data.City == 'Migori'].Cases))
     
-    pollutants = lockdown[["date", "City", "driving", "transit", "walking"]]
+    if st.checkbox('Plot Mombasa') :
+    	plot('Mombasa', max(data[data.City == 'Mombasa'].Cases))
     
-    pollutants = pollutants.melt(id_vars=["date", "City"], var_name = "CO2 Sources", value_name = "Concentration")
-    pollutants.sort_values(["date", "CO2 Sources"], inplace = True)
-    pollutants.head()
+    if st.checkbox('Plot Muranga') :
+    	plot('Muranga', max(data[data.City == 'Muranga'].Cases))
     
-    if st.checkbox("3.1. Show Plot with Average Concentration of CO2 Sources"):    
-        # data
-        st.write(barplot(pollutants, 
-            "City", 
-            "Concentration", 
-            "date", 
-            "CO2 Sources", 
-            "Average Concentration of CO2 Sources (Unit - µg/m³)", 
-            "Air Pollutants in France from 2020-21 during No Lockdown"))
+    if st.checkbox('Plot Nairobi') :
+    	plot('Nairobi', max(data[data.City == 'Nairobi'].Cases))
     
+    if st.checkbox('Plot Nakuru') :
+    	plot('Nakuru', max(data[data.City == 'Nakuru'].Cases))
     
+    if st.checkbox('Plot Nandi') :
+    	plot('Nandi', max(data[data.City == 'Nandi'].Cases))
+    
+    if st.checkbox('Plot Narok') :
+    	plot('Narok', max(data[data.City == 'Narok'].Cases))
+    
+    if st.checkbox('Plot Nyamira') :
+    	plot('Nyamira', max(data[data.City == 'Nyamira'].Cases))
+    
+    if st.checkbox('Plot Nyandarua') :
+    	plot('Nyandarua', max(data[data.City == 'Nyandarua'].Cases))
+    
+    if st.checkbox('Plot Nyeri') :
+    	plot('Nyeri', max(data[data.City == 'Nyeri'].Cases))
+    
+    if st.checkbox('Plot Samburu') :
+    	plot('Samburu', max(data[data.City == 'Samburu'].Cases))
+    
+    if st.checkbox('Plot Siaya') :
+    	plot('Siaya', max(data[data.City == 'Siaya'].Cases))
+    
+    if st.checkbox('Plot TaitaTaveta') :
+    	plot('TaitaTaveta', max(data[data.City == 'TaitaTaveta'].Cases))
+    
+    if st.checkbox('Plot TanaRiver') :
+    	plot('TanaRiver', max(data[data.City == 'TanaRiver'].Cases))
+    
+    if st.checkbox('Plot Tharaka Nithi') :
+    	plot('Tharaka Nithi', max(data[data.City == 'Tharaka Nithi'].Cases))
+    
+    if st.checkbox('Plot Trans Nzoia') :
+    	plot('Trans Nzoia', max(data[data.City == 'Trans Nzoia'].Cases))
+    
+    if st.checkbox('Plot Turkana') :
+    	plot('Turkana', max(data[data.City == 'Turkana'].Cases))
+    
+    if st.checkbox('Plot Uasin Gishu') :
+    	plot('Uasin Gishu', max(data[data.City == 'Uasin Gishu'].Cases))
+    
+    if st.checkbox('Plot Vihiga') :
+    	plot('Vihiga', max(data[data.City == 'Vihiga'].Cases))
+    
+    if st.checkbox('Plot Wajir') :
+    	plot('Wajir', max(data[data.City == 'Wajir'].Cases))
+    
+    if st.checkbox('Plot West Pokot') :
+    	plot('West Pokot', max(data[data.City == 'West Pokot'].Cases))
+            
+            
+            
     ########################################################################### 
-    
-    
-    
-    
-    
-    

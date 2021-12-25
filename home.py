@@ -28,6 +28,10 @@ def app():
     
     st.write("")
     
-    st.write("Page 3: Region-Wise Analysis")
+    st.write("Page 3: Cases & Fatalities")
+    
+    st.write("")
+    
+    st.write("Page 4: Region-Wise Analysis")
     
     
